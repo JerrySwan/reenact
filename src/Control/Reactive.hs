@@ -156,7 +156,7 @@ import Prelude hiding (mapM)
 import Data.Time
 import Data.Monoid  
 import Data.Maybe
-import Data.Either
+import qualified Data.Either
 import Data.String
 import Data.VectorSpace hiding (Sum, getSum)
 import Control.Monad
@@ -343,6 +343,9 @@ instance Functor (Event) where
 -- |
 -- Event is a monoid: 'mempty' is the event that never occurs, 'mappend' interleaves values.
 --
+instance Semigroup (Event a) where
+    (<>) = EMerge
+
 instance Monoid (Event a) where
     mempty  = ENever
     mappend = EMerge
@@ -600,6 +603,9 @@ eventMain' e = do
 -- Reactive has a lifted is a monoid: 'mempty' is the constant empty value and
 -- mappend combines values according to 'mappend' on values.
 --
+instance Monoid a => Semigroup (Reactive a) where
+    (<>) = liftA2 mappend
+
 instance Monoid a => Monoid (Reactive a) where
     mempty  = pure mempty
     mappend = liftA2 mappend
